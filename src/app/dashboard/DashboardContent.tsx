@@ -32,7 +32,7 @@ interface DashboardContentProps {
 interface TaskProps {
   id: string;
   tarefa: string;
-  createAt: Date; // Ou string, dependendo de como você armazena a data
+  createAt: Date;
   user: string;
   public: boolean;
 }
