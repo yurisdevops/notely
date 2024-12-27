@@ -1,5 +1,6 @@
+// src/app/task/[id]/page.tsx
 import { Metadata } from "next";
-import TaskContent from "./TaskContent"; // Verifique se o caminho do import está correto
+import TaskContent from "./TaskContent"; // Certifique-se de que o caminho do import está correto
 import { auth } from "@/auth";
 
 export const metadata: Metadata = {
@@ -16,27 +17,17 @@ interface User {
   name: string;
 }
 
-export default async function Task({
-  params,
-  user,
-}: {
-  params: Params;
-  user: User;
-}) {
+export default async function Task({ params }: { params: Params }) {
   const session = await auth();
 
-  // Redirecionando se o usuário não estiver autenticado
-  if (session) {
-    user = {
-      email: session.user?.email ?? "",
-      name: session.user?.name ?? "Usuário",
-    };
-  }
+  const user: User = {
+    email: session?.user?.email ?? "",
+    name: session?.user?.name ?? "Usuário",
+  };
 
   return (
     <div>
-      <TaskContent params={{ id: params.id }} user={user} allComments={[]} />{" "}
-      {/* Passando params e user */}
+      <TaskContent params={{ id: params.id }} user={user} allComments={[]} />
     </div>
   );
 }
