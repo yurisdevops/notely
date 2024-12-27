@@ -1,4 +1,3 @@
-// src/app/task/[id]/page.tsx
 import { Metadata } from "next";
 import TaskContent from "./TaskContent"; // Verifique se o caminho do import está correto
 import { auth } from "@/auth";
@@ -8,26 +7,32 @@ export const metadata: Metadata = {
   description: "Acesse os detalhes de sua tarefa.",
 };
 
-// Tipo genérico para PageProps
-interface PageProps {
-  params: {
-    id: string;
-  };
+interface Params {
+  id: string;
 }
 
-export default async function Task({ params }: PageProps) {
-  // Autenticação do usuário
-  const session = await auth();
+interface User {
+  email: string;
+  name: string;
+}
 
-  // Definindo o usuário
-  const user = {
-    email: session?.user?.email ?? "",
-    name: session?.user?.name ?? "Usuário",
-  };
+export default async function Task({ params }: { params: Promise<Params> }) {
+  const session = await auth();
+  let user: User | null = null;
+
+  if (session) {
+    user = {
+      email: session.user?.email ?? "",
+      name: session.user?.name ?? "Usuário",
+    };
+  }
+
+  const resolvedParams = await params;
+  const id = resolvedParams.id;
 
   return (
     <div>
-      <TaskContent params={{ id: params.id }} user={user} allComments={[]} />
+      <TaskContent params={{ id }} user={user} allComments={[]} />
     </div>
   );
 }

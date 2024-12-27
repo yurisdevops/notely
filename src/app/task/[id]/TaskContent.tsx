@@ -16,15 +16,19 @@ import {
 import { Textarea } from "@/app/components/textarea/TextArea";
 import { FaTrash } from "react-icons/fa";
 
+// Tipos para as props do componente
 interface TaskContainerProps {
   params: {
     id: string;
   };
-  user: {
-    email: string;
-    name: string;
-  };
+  user: User | null;
+
   allComments: CommentsProps[];
+}
+
+interface User {
+  email: string;
+  name: string;
 }
 
 interface TaskProps {
@@ -51,68 +55,105 @@ const TaskContent: React.FC<TaskContainerProps> = ({
 }) => {
   const { id } = params;
   const [task, setTask] = useState<TaskProps | null>(null);
-  const [comments, setComments] = useState<CommentsProps[]>(allComments || []);
+  const [comments, setComments] = useState<CommentsProps[]>(allComments);
   const [loading, setLoading] = useState(true);
   const [input, setInput] = useState("");
 
   useEffect(() => {
-    if (!id) {
-      console.error("ID da tarefa não está definido");
-      setLoading(false);
-      return;
-    }
-
     const fetchData = async () => {
+      if (!id) {
+        console.error("ID da tarefa não está definido");
+        setLoading(false);
+        return;
+      }
+
       try {
         const docRef = doc(db, "tasks", id);
         const snapshot = await getDoc(docRef);
 
         if (snapshot.exists()) {
-          const miliseconds = snapshot.data()?.createAt?.seconds * 1000;
           const taskData: TaskProps = {
             task: snapshot.data()?.tarefa,
             public: snapshot.data()?.public,
-            createAt: new Date(miliseconds).toLocaleDateString(),
+            createAt: new Date(
+              snapshot.data()?.createAt?.seconds * 1000
+            ).toLocaleDateString(),
             user: snapshot.data()?.user,
             taskId: id,
           };
 
           setTask(taskData);
-
-          const q = query(
-            collection(db, "comments"),
-            where("taskId", "==", id)
-          );
-          const commentsSnapshot = await getDocs(q);
-
-          let allComments: CommentsProps[] = [];
-
-          commentsSnapshot.forEach((doc) => {
-            allComments.push({
-              id: doc.id,
-              name: doc.data()?.name,
-              comment: doc.data()?.comment,
-              user: doc.data()?.user,
-              taskId: doc.data()?.taskId,
-              createAt: new Date(
-                doc.data()?.createAt?.seconds * 1000
-              ).toLocaleDateString(),
-            });
-          });
-
-          setComments(allComments);
+          await fetchComments(id);
         } else {
           console.error("Tarefa não encontrada!");
         }
       } catch (error) {
         console.error("Erro ao buscar tarefa:", error);
       } finally {
-        setLoading(false); // Garanta que você define loading como false
+        setLoading(false);
       }
+    };
+
+    const fetchComments = async (taskId: string) => {
+      const q = query(
+        collection(db, "comments"),
+        where("taskId", "==", taskId)
+      );
+      const commentsSnapshot = await getDocs(q);
+      const allComments: CommentsProps[] = commentsSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        name: doc.data()?.name,
+        comment: doc.data()?.comment,
+        user: doc.data()?.user,
+        taskId: doc.data()?.taskId,
+        createAt: new Date(
+          doc.data()?.createAt?.seconds * 1000
+        ).toLocaleDateString(),
+      }));
+      setComments(allComments);
     };
 
     fetchData();
   }, [id]);
+
+  const handleComment = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!input || !user) return;
+
+    try {
+      const docRef = await addDoc(collection(db, "comments"), {
+        comment: input,
+        createAt: new Date(),
+        user: user.email,
+        name: user.name,
+        taskId: id,
+      });
+
+      const newComment: CommentsProps = {
+        id: docRef.id,
+        comment: input,
+        user: user.email,
+        name: user.name,
+        taskId: id,
+        createAt: new Date().toLocaleDateString(),
+      };
+      setComments((oldItems) => [...oldItems, newComment]);
+      setInput("");
+    } catch (error) {
+      console.error("Erro ao adicionar comentário:", error);
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      await deleteDoc(doc(db, "comments", commentId));
+      setComments((oldItems) =>
+        oldItems.filter((item) => item.id !== commentId)
+      );
+    } catch (error) {
+      console.error("Erro ao deletar comentário:", error);
+    }
+  };
 
   if (loading) {
     return <p>Carregando...</p>;
@@ -120,42 +161,6 @@ const TaskContent: React.FC<TaskContainerProps> = ({
 
   if (!task) {
     return <p>Tarefa não encontrada!</p>;
-  }
-
-  async function handleComment(event: FormEvent) {
-    event.preventDefault();
-    if (!input) return;
-    if (!user) return;
-
-    try {
-      const docRef = await addDoc(collection(db, "comments"), {
-        comment: input,
-        createAt: new Date(),
-        user: user?.email,
-        name: user?.name,
-        taskId: params.id,
-      });
-
-      const data = {
-        id: docRef.id,
-        comment: input,
-        user: user?.email,
-        name: user?.name,
-        taskId: params?.id,
-        createAt: new Date().toLocaleDateString(),
-      };
-      setComments((oldItems) => [...oldItems, data]);
-      setInput("");
-    } catch (error) {}
-  }
-
-  async function handleDeleteComment(id: string) {
-    try {
-      await deleteDoc(doc(db, "comments", id));
-      setComments((oldItems) => oldItems.filter((i) => i.id !== id));
-    } catch (error) {
-      console.error(error);
-    }
   }
 
   return (
@@ -183,11 +188,7 @@ const TaskContent: React.FC<TaskContainerProps> = ({
       </section>
       <section className={styles.commentsContainer}>
         <h2>Todos Comentários</h2>
-        {comments.length === 0 && (
-          <>
-            <span>Nenhum comentário!</span>
-          </>
-        )}
+        {comments.length === 0 && <span>Nenhum comentário!</span>}
         {comments.map((item) => (
           <article key={item.id} className={styles.comment}>
             <div className={styles.headComment}>
