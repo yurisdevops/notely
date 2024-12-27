@@ -10,7 +10,7 @@ interface User {
   name: string;
 }
 
-const TaskPage = ({ user }: { user: User }) => {
+const Task = ({ user }: { user: User }) => {
   const navigation = useNavigation();
   const { id } = navigation.query;
 
@@ -24,4 +24,4 @@ const TaskPage = ({ user }: { user: User }) => {
   );
 };
 
-export default TaskPage;
+export default Task;
