@@ -6,13 +6,17 @@ export const metadata: Metadata = {
   description: "Acesse os detalhes de sua tarefa.",
 };
 
+ import { PageProps } from 'next/app';
+
 interface Params {
   id: string;
 }
 
-interface Props {
+interface Props extends PageProps {
   params: Params;
 }
+
+
 
 export default async function Task({ params }: Props) {
   console.log("Params recebidos:", params.id);
