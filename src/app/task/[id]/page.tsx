@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router';
+import { useNavigation } from 'next/navigation';
 import { Metadata } from "next";
 import TaskContent from "./TaskContent"; // Verifique se o caminho do import está correto
 import { auth } from "@/auth";
@@ -18,8 +18,8 @@ interface User {
 }
 
 export default async function Task({ user }: { user: User }) {
-  const router = useRouter();
-  const { id } = router.query; // Extracting id from URL query
+  const navigation = useNavigation();
+  const { id } = navigation.query;
 
   const session = await auth();
 
