@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { Textarea } from "../components/textarea/page";
+import { Textarea } from "../components/textarea/TextArea";
 
 import { FaTrash } from "react-icons/fa";
 import { FiShare2 } from "react-icons/fi";

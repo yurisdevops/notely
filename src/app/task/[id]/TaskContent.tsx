@@ -13,7 +13,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { Textarea } from "@/app/components/textarea/page";
+import { Textarea } from "@/app/components/textarea/TextArea";
 import { FaTrash } from "react-icons/fa";
 
 interface TaskContainerProps {
