@@ -1,95 +1,53 @@
+// app/page.tsx
+import styles from "@/app/styles/page.module.css";
 import Image from "next/image";
-import styles from "./page.module.css";
+import heroImg from "../../public/assets/hero.png";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/services/firebaseConnection";
 
-export default function Home() {
+async function getData() {
+  const commentRef = collection(db, "comments");
+  const tasksRef = collection(db, "tasks");
+
+  const commentSnapshot = await getDocs(commentRef);
+  const tasksSnapshot = await getDocs(tasksRef);
+
+  return {
+    tasks: tasksSnapshot.size || 0,
+    comments: commentSnapshot.size || 0,
+  };
+}
+
+export default async function Home() {
+  const { tasks, comments } = await getData();
+
   return (
-    <div className={styles.page}>
+    <div className={styles.container}>
       <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+        <div className={styles.logoContent}>
+          <Image
+            className={styles.hero}
+            alt="Logo Tarefas+"
+            src={heroImg}
+            priority
+          />
+        </div>
+        <h1 className={styles.title}>
+          Sistema feito para você organizar <br />
+          seus estudos e tarefas
+        </h1>
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+        <div className={styles.infoContent}>
+          <section className={styles.box}>
+            <span>+{tasks} posts</span>
+          </section>
+          <section className={styles.box}>
+            <span>+{comments} comentários</span>
+          </section>
         </div>
       </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
+
+export const revalidate = 3600; // Revalida a cada 1 hora para manter os dados atualizados
