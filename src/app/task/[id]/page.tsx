@@ -8,11 +8,18 @@ export const metadata: Metadata = {
   description: "Acesse os detalhes de sua tarefa.",
 };
 
-export default async function Task({ params }: { params: { id: string } }) {
+// Tipo genérico para PageProps
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default async function Task({ params }: PageProps) {
   // Autenticação do usuário
   const session = await auth();
 
-  // Defina o usuário
+  // Definindo o usuário
   const user = {
     email: session?.user?.email ?? "",
     name: session?.user?.name ?? "Usuário",
