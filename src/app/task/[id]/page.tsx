@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import TaskContainer from "./taskContainer"; // O caminho deve ser correto
+import TaskContent from "./TaskContent"; // O caminho deve ser correto
 
 export const metadata: Metadata = {
   title: "Detalhes da tarefa | Notely",
