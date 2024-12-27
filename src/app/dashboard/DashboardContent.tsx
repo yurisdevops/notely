@@ -21,6 +21,7 @@ import {
   where,
 } from "firebase/firestore";
 import Link from "next/link";
+import { toast } from "react-toastify";
 
 interface DashboardContentProps {
   user: {
@@ -44,7 +45,6 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ user }) => {
 
   function handleChangePublic(event: ChangeEvent<HTMLInputElement>) {
     setPublicTask(event.target.checked);
-    console.log(event.target.checked);
   }
 
   async function handleRegisterTask(event: FormEvent) {
@@ -59,6 +59,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ user }) => {
         user: user?.email,
         public: publicTask,
       });
+      toast.success("Tarefa Registrada!");
       setInput("");
       setPublicTask(false);
     } catch (error) {
@@ -95,6 +96,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({ user }) => {
   async function handleDeleteTask(id: string) {
     try {
       await deleteDoc(doc(db, "tasks", id));
+      toast.success("Tarefa Excluída!");
     } catch (error) {
       console.error(error);
     }

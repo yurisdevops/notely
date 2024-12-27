@@ -15,6 +15,7 @@ import {
 } from "firebase/firestore";
 import { Textarea } from "@/app/components/textarea/TextArea";
 import { FaTrash } from "react-icons/fa";
+import { toast } from "react-toastify"; // Importando o toast
 
 // Tipos para as props do componente
 interface TaskContainerProps {
@@ -86,9 +87,11 @@ const TaskContent: React.FC<TaskContainerProps> = ({
           await fetchComments(id);
         } else {
           console.error("Tarefa não encontrada!");
+          toast.error("Tarefa não encontrada!");
         }
       } catch (error) {
         console.error("Erro ao buscar tarefa:", error);
+        toast.error("Erro ao buscar tarefa.");
       } finally {
         setLoading(false);
       }
@@ -139,8 +142,10 @@ const TaskContent: React.FC<TaskContainerProps> = ({
       };
       setComments((oldItems) => [...oldItems, newComment]);
       setInput("");
+      toast.success("Comentário adicionado com sucesso!");
     } catch (error) {
       console.error("Erro ao adicionar comentário:", error);
+      toast.error("Erro ao adicionar comentário.");
     }
   };
 
@@ -150,8 +155,10 @@ const TaskContent: React.FC<TaskContainerProps> = ({
       setComments((oldItems) =>
         oldItems.filter((item) => item.id !== commentId)
       );
+      toast.success("Comentário deletado com sucesso!"); // Notificação de sucesso
     } catch (error) {
       console.error("Erro ao deletar comentário:", error);
+      toast.error("Erro ao deletar comentário."); // Notificação de erro
     }
   };
 
