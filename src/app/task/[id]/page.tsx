@@ -1,6 +1,6 @@
 // src/app/task/[id]/page.tsx
 import { Metadata } from "next";
-import TaskContent from "./TaskContent"; // Certifique-se de que o caminho do import está correto
+import TaskContent from "./TaskContent"; // Verifique se o caminho do import está correto
 import { auth } from "@/auth";
 
 export const metadata: Metadata = {
@@ -12,15 +12,12 @@ interface Params {
   id: string;
 }
 
-interface User {
-  email: string;
-  name: string;
-}
-
 export default async function Task({ params }: { params: Params }) {
+  // Autenticação do usuário
   const session = await auth();
 
-  const user: User = {
+  // Defina o usuário
+  const user = {
     email: session?.user?.email ?? "",
     name: session?.user?.name ?? "Usuário",
   };
