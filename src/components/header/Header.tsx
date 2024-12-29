@@ -3,7 +3,6 @@ import { auth } from "@/auth";
 
 import Link from "next/link";
 
-import { toast } from "react-toastify";
 import ButtonLogout from "../buttonLogout/ButtonLogout";
 import ButtonLogin from "../buttonLogin/ButtonLogin";
 
