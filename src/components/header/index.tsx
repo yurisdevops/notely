@@ -3,8 +3,8 @@ import { auth } from "@/auth";
 
 import Link from "next/link";
 
-import ButtonLogout from "../buttonLogout/ButtonLogout";
-import ButtonLogin from "../buttonLogin/ButtonLogin";
+import ButtonLogout from "../buttonLogout";
+import ButtonLogin from "../buttonLogin";
 
 export async function Header() {
   const session = await auth();

@@ -1,7 +1,7 @@
 // src/app/dashboard/page.tsx
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import DashboardContent from "./DashboardContent"; // Importando o novo componente cliente
+import DashboardContent from "./components/dashboardContent"; // Importando o novo componente cliente
 import { auth } from "@/auth";
 
 export const metadata: Metadata = {

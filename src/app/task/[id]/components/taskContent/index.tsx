@@ -1,6 +1,6 @@
 "use client";
 
-import styles from "./task.module.css";
+import styles from "./styles/task.module.css";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { db } from "@/services/firebaseConnection";
 import {
@@ -13,7 +13,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { Textarea } from "@/components/textarea/TextArea";
+import { Textarea } from "@/components/textarea";
 import { FaTrash } from "react-icons/fa";
 import { toast } from "react-toastify"; // Importando o toast
 

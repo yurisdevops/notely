@@ -1,12 +1,12 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { Textarea } from "@/components/textarea/TextArea";
+import { Textarea } from "@/components/textarea";
 
 import { FaTrash } from "react-icons/fa";
 import { FiShare2 } from "react-icons/fi";
 
-import styles from "./dashboard.module.css";
+import styles from "./styles/dashboard.module.css";
 
 import { db } from "@/services/firebaseConnection";
 import {

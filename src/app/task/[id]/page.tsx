@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import TaskContent from "./TaskContent"; // Verifique se o caminho do import está correto
+import TaskContent from "./components/taskContent"; // Verifique se o caminho do import está correto
 import { auth } from "@/auth";
 
 export const metadata: Metadata = {
